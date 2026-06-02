@@ -28,7 +28,7 @@ identifies live hosts, and detects open ports and running services.
 Python 3.6 or higher
 
 ### Installation
-git clone https://github.com/YOUR-USERNAME/network-scanner
+git clone https://github.com/Deepikakumarasamy/network-scanner
 cd network-scanner
 
 ### Usage

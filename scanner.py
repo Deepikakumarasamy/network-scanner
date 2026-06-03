@@ -18,6 +18,15 @@ COMMON_PORTS = {
     8080: "HTTP-Alt" ,
     8443: "HTTPS-Alt"
 }
+SECURITY_NOTES = {
+    21: "CRITICAL - FTP transmits credentials in plain text",
+    22: "INFO - SSH open, check for brute force protection",
+    23: "CRITICAL - Telnet is unencrypted, replace with SSH",
+    25: "WARNING - SMTP open, check for open relay",
+    3306: "CRITICAL - MySQL exposed to network, should be localhost only",
+    3389: "HIGH - RDP exposed, high brute force risk",
+    445: "HIGH - SMB open, check for EternalBlue vulnerability"
+}
 def scan_port(ip, port, timeout=1):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,7 +92,11 @@ def print_results(results):
         print(f"Status: {host['status']}")
         print("Open Ports:")
         for port_info in host["open_ports"]:
-            print(f"  {port_info['port']:5d} | {port_info['service']}")
+            note = SECURITY_NOTES.get(port_info['port'], "")
+            if note:
+                  print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
+            else:
+                  print(f"  {port_info['port']:5d} | {port_info['service']}")
         print("-" * 40)
     
     print(f"\nTotal hosts with open ports: {len(hosts_with_ports)}")

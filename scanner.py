@@ -36,17 +36,32 @@ def scan_port(ip, port, timeout=1):
         return result == 0
     except socket.error:
         return False
-
+def grab_banner(ip, port, timeout=2):
+  try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        sock.connect((str(ip), port))
+        
+        # Send HTTP request for web ports
+        if port in [80, 8080, 443, 8443]:
+            sock.send(b"HEAD / HTTP/1.0\r\n\r\n")
+        
+        banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
+        sock.close()
+        return banner[:100] if banner else "No banner"
+    except:
+        return "No banner"
 def scan_host(ip):
     open_ports = []
 
     for port, service in COMMON_PORTS.items():
         if scan_port(ip, port):
-            open_ports.append({
-                "port": port,
-                "service": service
-            })
-    
+           banner = grab_banner(ip, port)
+           open_ports.append({
+        "port": port,
+        "service": service,
+        "banner": banner
+    })
     return {
         "ip": str(ip),
         "open_ports": open_ports,
@@ -93,11 +108,13 @@ def print_results(results):
         print("Open Ports:")
         for port_info in host["open_ports"]:
             note = SECURITY_NOTES.get(port_info['port'], "")
+            banner = port_info.get('banner', 'No banner')
             if note:
                   print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
             else:
-                  print(f"  {port_info['port']:5d} | {port_info['service']}")
-        print("-" * 40)
+                 print(f"  {port_info['port']:5d} | {port_info['service']}")
+             if banner and banner != "No banner":
+                 print(f"          Banner: {banner[:80]}")
     
     print(f"\nTotal hosts with open ports: {len(hosts_with_ports)}")
 

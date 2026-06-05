@@ -37,7 +37,7 @@ def scan_port(ip, port, timeout=1):
     except socket.error:
         return False
 def grab_banner(ip, port, timeout=2):
-    try:
+  try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
         sock.connect((str(ip), port))
@@ -49,9 +49,8 @@ def grab_banner(ip, port, timeout=2):
         banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
         sock.close()
         return banner[:100] if banner else "No banner"
-    except:
+  except:
         return "No banner"
-
 def scan_host(ip):
     open_ports = []
 
@@ -59,11 +58,10 @@ def scan_host(ip):
         if scan_port(ip, port):
            banner = grab_banner(ip, port)
            open_ports.append({
-            "port": port,
-            "service": service,
-            "banner": banner
-         })
-    
+        "port": port,
+        "service": service,
+        "banner": banner
+    })
     return {
         "ip": str(ip),
         "open_ports": open_ports,
@@ -112,18 +110,17 @@ def print_results(results):
             note = SECURITY_NOTES.get(port_info['port'], "")
             banner = port_info.get('banner', 'No banner')
             if note:
-                 print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
+                  print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
             else:
                  print(f"  {port_info['port']:5d} | {port_info['service']}")
             if banner and banner != "No banner":
                  print(f"          Banner: {banner[:80]}")
     
     print(f"\nTotal hosts with open ports: {len(hosts_with_ports)}")
+
+
 def save_results(results, filename):
-    """
-    Saves scan results to a text file including security notes
-    and banner information.
-    """
+    
     with open(filename, 'w') as f:
         f.write(f"Network Scan Report\n")
         f.write(f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -146,7 +143,6 @@ def save_results(results, filename):
                 f.write("\n")
     
     print(f"\nResults saved to {filename}")
-
 
 def scan_network(start_ip, end_ip):
     print(f"\nScanning range: {start_ip} to {end_ip}")

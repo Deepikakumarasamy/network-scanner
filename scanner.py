@@ -49,7 +49,7 @@ def grab_banner(ip, port, timeout=2):
         banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
         sock.close()
         return banner[:100] if banner else "No banner"
-    except:
+except:
         return "No banner"
 def scan_host(ip):
     open_ports = []
@@ -113,7 +113,7 @@ def print_results(results):
                   print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
             else:
                  print(f"  {port_info['port']:5d} | {port_info['service']}")
-             if banner and banner != "No banner":
+            if banner and banner != "No banner":
                  print(f"          Banner: {banner[:80]}")
     
     print(f"\nTotal hosts with open ports: {len(hosts_with_ports)}")

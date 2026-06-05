@@ -36,16 +36,33 @@ def scan_port(ip, port, timeout=1):
         return result == 0
     except socket.error:
         return False
+def grab_banner(ip, port, timeout=2):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        sock.connect((str(ip), port))
+        
+        # Send HTTP request for web ports
+        if port in [80, 8080, 443, 8443]:
+            sock.send(b"HEAD / HTTP/1.0\r\n\r\n")
+        
+        banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
+        sock.close()
+        return banner[:100] if banner else "No banner"
+    except:
+        return "No banner"
 
 def scan_host(ip):
     open_ports = []
 
     for port, service in COMMON_PORTS.items():
         if scan_port(ip, port):
-            open_ports.append({
-                "port": port,
-                "service": service
-            })
+           banner = grab_banner(ip, port)
+           open_ports.append({
+            "port": port,
+            "service": service,
+            "banner": banner
+         })
     
     return {
         "ip": str(ip),
@@ -93,17 +110,20 @@ def print_results(results):
         print("Open Ports:")
         for port_info in host["open_ports"]:
             note = SECURITY_NOTES.get(port_info['port'], "")
+            banner = port_info.get('banner', 'No banner')
             if note:
-                  print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
+                 print(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}")
             else:
-                  print(f"  {port_info['port']:5d} | {port_info['service']}")
-        print("-" * 40)
+                 print(f"  {port_info['port']:5d} | {port_info['service']}")
+            if banner and banner != "No banner":
+                 print(f"          Banner: {banner[:80]}")
     
     print(f"\nTotal hosts with open ports: {len(hosts_with_ports)}")
-
-
 def save_results(results, filename):
-   
+    """
+    Saves scan results to a text file including security notes
+    and banner information.
+    """
     with open(filename, 'w') as f:
         f.write(f"Network Scan Report\n")
         f.write(f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -112,8 +132,17 @@ def save_results(results, filename):
         for host in results:
             if host["open_ports"]:
                 f.write(f"Host: {host['ip']}\n")
+                f.write(f"Status: {host['status']}\n")
+                f.write("Open Ports:\n")
                 for port_info in host["open_ports"]:
-                    f.write(f"  Port {port_info['port']}: {port_info['service']}\n")
+                    note = SECURITY_NOTES.get(port_info['port'], "")
+                    banner = port_info.get('banner', 'No banner')
+                    if note:
+                        f.write(f"  {port_info['port']:5d} | {port_info['service']:12} | {note}\n")
+                    else:
+                        f.write(f"  {port_info['port']:5d} | {port_info['service']}\n")
+                    if banner and banner != "No banner":
+                        f.write(f"          Banner: {banner[:80]}\n")
                 f.write("\n")
     
     print(f"\nResults saved to {filename}")

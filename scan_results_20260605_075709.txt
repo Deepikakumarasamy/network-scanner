@@ -1,0 +1,16 @@
+Network Scan Report
+Date: 2026-06-05 07:57:09
+============================================================
+
+Host: 192.168.1.5
+Status: alive
+Open Ports:
+    445 | SMB          | HIGH - SMB open, check for EternalBlue vulnerability
+
+Host: 192.168.1.1
+Status: alive
+Open Ports:
+     53 | DNS
+     80 | HTTP
+          Banner: HTTP/1.0 200 OK
+

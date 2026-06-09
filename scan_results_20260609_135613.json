@@ -1,0 +1,74 @@
+{
+    "scan_date": "2026-06-09 13:56:13",
+    "total_hosts_scanned": 10,
+    "hosts_with_open_ports": 2,
+    "results": [
+        {
+            "ip": "192.168.1.5",
+            "open_ports": [
+                {
+                    "port": 445,
+                    "service": "SMB",
+                    "banner": "No banner"
+                }
+            ],
+            "status": "alive"
+        },
+        {
+            "ip": "192.168.1.3",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.6",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.10",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.4",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.7",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.8",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.9",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.2",
+            "open_ports": [],
+            "status": "no open ports found"
+        },
+        {
+            "ip": "192.168.1.1",
+            "open_ports": [
+                {
+                    "port": 53,
+                    "service": "DNS",
+                    "banner": "No banner"
+                },
+                {
+                    "port": 80,
+                    "service": "HTTP",
+                    "banner": "HTTP/1.0 200 OK"
+                }
+            ],
+            "status": "alive"
+        }
+    ]
+}

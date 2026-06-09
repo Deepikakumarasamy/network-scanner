@@ -50,7 +50,11 @@ def grab_banner(ip, port, timeout=2):
         banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
         sock.close()
         return banner[:100] if banner else "No banner"
+<<<<<<< HEAD
     except:
+=======
+  except:
+>>>>>>> origin/main
         return "No banner"
 def scan_host(ip):
     open_ports = []

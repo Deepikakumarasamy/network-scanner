@@ -3,6 +3,7 @@ import ipaddress
 import concurrent.futures
 import datetime
 import sys
+import json
 COMMON_PORTS = {
     21: "FTP" ,
     22: "SSH" ,
@@ -37,7 +38,7 @@ def scan_port(ip, port, timeout=1):
     except socket.error:
         return False
 def grab_banner(ip, port, timeout=2):
-  try:
+    try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
         sock.connect((str(ip), port))
@@ -49,11 +50,7 @@ def grab_banner(ip, port, timeout=2):
         banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
         sock.close()
         return banner[:100] if banner else "No banner"
-<<<<<<< HEAD
-  except:
-=======
-except:
->>>>>>> ae7f20fd0df0e548bc086b7ae7abb2c2ee6d5b0b
+    except:
         return "No banner"
 def scan_host(ip):
     open_ports = []
@@ -148,6 +145,17 @@ def save_results(results, filename):
     
     print(f"\nResults saved to {filename}")
 
+def save_results_json(results, filename):
+    output = {
+        "scan_date": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "total_hosts_scanned": len(results),
+        "hosts_with_open_ports": len([r for r in results if r["open_ports"]]),
+        "results": results
+    }
+    with open(filename, 'w') as f:
+        json.dump(output, f, indent=4)
+    print(f"JSON results saved to {filename}")
+
 def scan_network(start_ip, end_ip):
     print(f"\nScanning range: {start_ip} to {end_ip}")
     
@@ -230,6 +238,8 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"scan_results_{timestamp}.txt"
     save_results(results, filename)
+    json_filename = f"scan_results_{timestamp}.json"
+    save_results_json(results, json_filename)
 
 
 if __name__ == "__main__":
